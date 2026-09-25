@@ -19,3 +19,17 @@ Available OpenCode skills:
 - `caveman-review`: one-line code review comments.
 - `caveman-help`: quick reference card.
 - `caveman-compress`: compress markdown memory files while preserving technical content.
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues via `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default canonical labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context layout: `CONTEXT.md` + `docs/adr/` at repo root. See `docs/agents/domain.md`.
