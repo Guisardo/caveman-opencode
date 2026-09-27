@@ -6,6 +6,15 @@ import { STORAGE_KEYS, VALID_LEVELS, type CavemanLevel } from "./storage-keys.js
 
 const DEFAULT_LEVEL: CavemanLevel = "full";
 
+function isStoredLevel(obj: unknown): obj is { level: string } {
+  return (
+    obj !== null &&
+    typeof obj === "object" &&
+    "level" in obj &&
+    typeof (obj as { level: unknown }).level === "string"
+  );
+}
+
 export default {
   ...Plugin.define({
     id: "caveman",
@@ -16,9 +25,7 @@ export default {
 
       // 2. Load user-overridden default from storage (persists across sessions)
       const stored = await ctx.storage.get(STORAGE_KEYS.DEFAULT_LEVEL);
-      const storedLevel = stored && typeof stored === "object" && "level" in stored
-        ? (stored as { level: string }).level
-        : undefined;
+      const storedLevel = isStoredLevel(stored) ? stored.level : undefined;
       const effectiveLevel: CavemanLevel = storedLevel && VALID_LEVELS.includes(storedLevel as CavemanLevel)
         ? (storedLevel as CavemanLevel)
         : configOptions.defaultLevel ?? DEFAULT_LEVEL;
