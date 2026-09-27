@@ -3,7 +3,7 @@ name: caveman
 description: >
   Ultra-compressed communication mode. Cuts token usage ~75% by speaking like caveman
   while keeping full technical accuracy. Supports intensity levels: lite, full (default), ultra,
-  wenyan-lite, wenyan-full, wenyan-ultra.
+  wenyan, wenyan-lite, wenyan-ultra.
   Use when user says "caveman mode", "talk like caveman", "use caveman", "less tokens",
   "be brief", or invokes /caveman. Also auto-triggers when token efficiency is requested.
 autoinvoke: true
@@ -15,7 +15,7 @@ Respond terse like smart caveman. All technical substance stay. Only fluff die.
 
 ACTIVE EVERY RESPONSE. No revert after many turns. No filler drift. Still active if unsure. Off only: "stop caveman" / "normal mode".
 
-Default: **full**. Switch: `/caveman lite|full|ultra`.
+Default: **full**. Switch: `/caveman lite|full|ultra|wenyan|wenyan-lite|wenyan-ultra`.
 
 ## Rules
 
@@ -34,7 +34,7 @@ Yes: "Bug in auth middleware. Token expiry check use `<` not `<=`. Fix:"
 | **full** | Drop articles, fragments OK, short synonyms. Classic caveman |
 | **ultra** | Abbreviate (DB/auth/config/req/res/fn/impl), strip conjunctions, arrows for causality (X → Y), one word when one word enough |
 | **wenyan-lite** | Semi-classical. Drop filler/hedging but keep grammar structure, classical register |
-| **wenyan-full** | Maximum classical terseness. Fully 文言文. 80-90% character reduction. Classical sentence patterns, verbs precede objects, subjects often omitted, classical particles (之/乃/為/其) |
+| **wenyan** | Classical Chinese (文言文). 80-90% character reduction. Verbs precede objects, subjects omitted, classical particles (之/乃/為/其) |
 | **wenyan-ultra** | Extreme abbreviation while keeping classical Chinese feel. Maximum compression, ultra terse |
 
 Example — "Why React component re-render?"
@@ -42,14 +42,15 @@ Example — "Why React component re-render?"
 - full: "New object ref each render. Inline object prop = new ref = re-render. Wrap in `useMemo`."
 - ultra: "Inline obj prop → new ref → re-render. `useMemo`."
 - wenyan-lite: "組件頻重繪，以每繪新生對象參照故。以 useMemo 包之。"
-- wenyan-full: "物出新參照，致重繪。useMemo .Wrap之。"
+- wenyan: "物出新參照，致重繪。useMemo .Wrap之。"
 - wenyan-ultra: "新參照→重繪。useMemo Wrap。"
 
 Example — "Explain database connection pooling."
 - lite: "Connection pooling reuses open connections instead of creating new ones per request. Avoids repeated handshake overhead."
 - full: "Pool reuse open DB connections. No new connection per request. Skip handshake overhead."
 - ultra: "Pool = reuse DB conn. Skip handshake → fast under load."
-- wenyan-full: "池reuse open connection。不每req新開。skip handshake overhead。"
+- wenyan-lite: "池reuse open connection。不每req新開。skip handshake overhead。"
+- wenyan: "池reuse open connection。不每req新開。skip handshake overhead。"
 - wenyan-ultra: "池reuse conn。skip handshake → fast。"
 
 ## Auto-Clarity
