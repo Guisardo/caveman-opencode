@@ -73,7 +73,7 @@ export default {
       });
     },
   }),
-  async server() {
+  server() {
     // v1: Minimal compatibility - no hooks needed
     // All functionality uses v2 APIs in setup()
     return {};
