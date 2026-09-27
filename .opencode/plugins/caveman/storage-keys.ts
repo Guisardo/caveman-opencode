@@ -4,7 +4,17 @@ export const STORAGE_KEYS = {
   DEFAULT_LEVEL: "defaultLevel",
 } as const;
 
-/** Valid caveman intensity levels */
+/**
+ * Single source of truth for valid caveman intensity levels.
+ *
+ * This is the canonical enum definition. All other locations (skill docs, command docs,
+ * validation logic) MUST derive from this array. Do not duplicate the level list elsewhere.
+ *
+ * To add/modify levels:
+ * 1. Update this array
+ * 2. Run tests to verify skill docs and command docs stay in sync
+ * 3. Update skill descriptions if new levels need documentation
+ */
 export const VALID_LEVELS = [
   "lite",
   "full",
