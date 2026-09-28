@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { parseFrontmatter, normalizeValue, unwrapFoldedScalar } from "./frontmatter.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = resolve(__filename, "..");
@@ -33,49 +34,19 @@ export interface SkillMarkdownMeta {
 }
 
 export function parseSkillMarkdown(markdown: string): { meta: SkillMarkdownMeta; body: string } {
-  const frontmatterMatch = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  if (!frontmatterMatch || !frontmatterMatch[1]) {
-    return { meta: {}, body: markdown };
-  }
+  const { meta, body } = parseFrontmatter(markdown);
 
-  const frontmatter = frontmatterMatch[1];
-  const body = markdown.slice(frontmatterMatch[0].length).trimStart();
-
-  const meta: SkillMarkdownMeta = {};
-  const lines = frontmatter.split("\n");
-  let currentKey: string | null = null;
-  let currentValue = "";
-
-  for (const line of lines) {
-    const colonIndex = line.indexOf(":");
-    if (colonIndex > 0 && line[0] !== " " && line[0] !== "\r") {
-      if (currentKey !== null) {
-        meta[currentKey] = normalizeValue(currentValue.trim());
-      }
-      currentKey = line.slice(0, colonIndex).trim();
-      currentValue = line.slice(colonIndex + 1);
-    } else if (currentKey !== null) {
-      currentValue += "\n" + line;
+  // Handle skill-specific post-processing
+  const skillMeta: SkillMarkdownMeta = {};
+  for (const [key, value] of Object.entries(meta)) {
+    let normalized = normalizeValue(value);
+    if (key === "description") {
+      normalized = unwrapFoldedScalar(normalized);
     }
-  }
-  if (currentKey !== null) {
-    meta[currentKey] = normalizeValue(currentValue.trim());
+    skillMeta[key] = normalized;
   }
 
-  // Handle YAML folded scalar indicator (>) - extract first line after >
-  if (meta.description && typeof meta.description === "string" && meta.description.startsWith(">")) {
-    const descLines = meta.description.split("\n");
-    meta.description = descLines.slice(1).map(l => l.trimStart()).join(" ").trim();
-  }
-
-  return { meta, body };
-}
-
-function normalizeValue(value: string): string | boolean {
-  const trimmed = value.trim();
-  if (trimmed === "true") return true;
-  if (trimmed === "false") return false;
-  return trimmed;
+  return { meta: skillMeta, body };
 }
 
 export async function loadSkill(id: SkillId): Promise<SkillInfo> {
@@ -85,10 +56,10 @@ export async function loadSkill(id: SkillId): Promise<SkillInfo> {
 
   return {
     id,
-    name: meta.name ?? id,
-    description: meta.description ?? "",
+    name: String(meta.name ?? id),
+    description: String(meta.description ?? ""),
     path: skillPath,
     content: body,
-    autoinvoke: meta.autoinvoke ?? false,
+    autoinvoke: Boolean(meta.autoinvoke),
   };
 }
