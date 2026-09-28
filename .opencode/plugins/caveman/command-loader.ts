@@ -3,9 +3,8 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseFrontmatter } from "./frontmatter.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = resolve(__filename, "..");
-const COMMANDS_DIR = resolve(__dirname, "../../commands");
+const PLUGIN_ROOT = resolve(fileURLToPath(import.meta.url), "../../../..");
+const COMMANDS_DIR = resolve(PLUGIN_ROOT, ".opencode/commands");
 
 export interface CommandDef {
   name: string;
