@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { parseFrontmatter } from "./frontmatter.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = resolve(__filename, "..");
@@ -26,36 +27,8 @@ export interface CommandMarkdownMeta {
 }
 
 export function parseCommandMarkdown(markdown: string): { meta: CommandMarkdownMeta; body: string } {
-  const frontmatterMatch = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  if (!frontmatterMatch || !frontmatterMatch[1]) {
-    return { meta: {}, body: markdown };
-  }
-
-  const frontmatter = frontmatterMatch[1];
-  const body = markdown.slice(frontmatterMatch[0].length).trimStart();
-
-  const meta: CommandMarkdownMeta = {};
-  const lines = frontmatter.split("\n");
-  let currentKey: string | null = null;
-  let currentValue = "";
-
-  for (const line of lines) {
-    const colonIndex = line.indexOf(":");
-    if (colonIndex > 0 && line[0] !== " ") {
-      if (currentKey !== null) {
-        meta[currentKey] = currentValue.trim();
-      }
-      currentKey = line.slice(0, colonIndex).trim();
-      currentValue = line.slice(colonIndex + 1);
-    } else if (currentKey !== null) {
-      currentValue += "\n" + line;
-    }
-  }
-  if (currentKey !== null) {
-    meta[currentKey] = currentValue.trim();
-  }
-
-  return { meta, body };
+  const { meta, body } = parseFrontmatter(markdown);
+  return { meta: meta as CommandMarkdownMeta, body };
 }
 
 export async function loadCommandMeta(name: string): Promise<{ description: string; path: string }> {
@@ -64,7 +37,7 @@ export async function loadCommandMeta(name: string): Promise<{ description: stri
   const { meta } = parseCommandMarkdown(content);
 
   return {
-    description: meta.description ?? "",
+    description: String(meta.description ?? ""),
     path: commandPath,
   };
 }
