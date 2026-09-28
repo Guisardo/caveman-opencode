@@ -1,11 +1,29 @@
-__pycache__/
-*.pyc
-.venv/
-.env.local
-**/.DS_Store
+# Dependencies
+node_modules/
+.opencode/plugins/caveman/node_modules/
+.opencode/plugins/caveman/dist/
 
-.opencode/clipboard-images/
-.opencode/node_modules/
-.opencode/package.json
-.opencode/package-lock.json
-.opencode/bun.lock
+# Build outputs
+dist/
+build/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Temporary files
+*.tmp
+*.temp
+*.ps1
+*.md~
