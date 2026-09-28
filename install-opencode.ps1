@@ -100,7 +100,7 @@ function Expand-ZipArchive([string]$Path, [string]$DestinationPath) {
 if (-not (Test-Path -LiteralPath (Join-Path $sourceOpenCode "AGENTS.md"))) {
   $archiveUrl = $env:CAVEMAN_OPENCODE_ARCHIVE_URL
   if ([string]::IsNullOrWhiteSpace($archiveUrl)) {
-    $archiveUrl = "https://github.com/anthonystepvoy/caveman-opencode/archive/refs/heads/main.zip"
+    $archiveUrl = "https://github.com/Guisardo/caveman-opencode/archive/refs/heads/main.zip"
   }
 
   $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ("caveman-opencode-" + [System.Guid]::NewGuid().ToString("N"))
