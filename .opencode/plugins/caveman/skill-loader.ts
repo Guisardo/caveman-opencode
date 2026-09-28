@@ -3,9 +3,8 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseFrontmatter, normalizeValue, unwrapFoldedScalar } from "./frontmatter.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = resolve(__filename, "..");
-const SKILLS_DIR = resolve(__dirname, "../../skills");
+const PLUGIN_ROOT = resolve(fileURLToPath(import.meta.url), "../../../..");
+const SKILLS_DIR = resolve(PLUGIN_ROOT, ".opencode/skills");
 
 export const SKILL_IDS = [
   "caveman",
