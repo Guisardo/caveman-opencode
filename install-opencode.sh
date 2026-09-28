@@ -28,7 +28,7 @@ cleanup() {
 trap cleanup EXIT
 
 if [ ! -f "$source_opencode/AGENTS.md" ]; then
-  archive_url="${CAVEMAN_OPENCODE_ARCHIVE_URL:-https://github.com/anthonystepvoy/caveman-opencode/archive/refs/heads/main.tar.gz}"
+  archive_url="${CAVEMAN_OPENCODE_ARCHIVE_URL:-https://github.com/Guisardo/caveman-opencode/archive/refs/heads/main.tar.gz}"
   cleanup_dir="${TMPDIR:-/tmp}/caveman-opencode-$$"
   archive_file="$cleanup_dir/source.tar.gz"
   mkdir -p "$cleanup_dir"
