@@ -6,12 +6,13 @@ import { STORAGE_KEYS, VALID_LEVELS, type CavemanLevel } from "./storage-keys.js
 
 const DEFAULT_LEVEL: CavemanLevel = "full";
 
-function isStoredLevel(obj: unknown): obj is { level: string } {
+function isStoredLevel(obj: unknown): obj is { level: CavemanLevel } {
   return (
     obj !== null &&
     typeof obj === "object" &&
     "level" in obj &&
-    typeof (obj as { level: unknown }).level === "string"
+    typeof (obj as { level: unknown }).level === "string" &&
+    VALID_LEVELS.includes((obj as { level: string }).level as CavemanLevel)
   );
 }
 
@@ -56,7 +57,7 @@ export default {
             execute: async ({ sessionID, prompt, delivery }) => {
               await ctx.session.prompt({
                 sessionID,
-                text: `/skill ${skill}${prompt.text ? ` ${prompt.text}` : ''}`,
+                text: `/skill ${skill}${prompt.text?.trim() ? ` ${prompt.text.trim()}` : ''}`,
                 delivery,
               });
             },
@@ -73,7 +74,7 @@ export default {
       });
     },
   }),
-  async server() {
+  server() {
     // v1: Minimal compatibility - no hooks needed
     // All functionality uses v2 APIs in setup()
     return {};
