@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { parseFrontmatter } from "./frontmatter.js";
+import { parseMarkdown, commandMetaPostProcessor, type MarkdownMeta } from "./markdown-parser.js";
 
 const PLUGIN_ROOT = resolve(fileURLToPath(import.meta.url), "../../../..");
 const COMMANDS_DIR = resolve(PLUGIN_ROOT, ".opencode/commands");
@@ -20,14 +20,12 @@ export const COMMAND_DEFS: readonly CommandDef[] = [
   { name: "caveman-compress", skill: "caveman-compress", description: "Compress a markdown memory file into caveman prose" },
 ] as const;
 
-export interface CommandMarkdownMeta {
+export interface CommandMarkdownMeta extends MarkdownMeta {
   description?: string;
-  [key: string]: unknown;
 }
 
 export function parseCommandMarkdown(markdown: string): { meta: CommandMarkdownMeta; body: string } {
-  const { meta, body } = parseFrontmatter(markdown);
-  return { meta: meta as CommandMarkdownMeta, body };
+  return parseMarkdown<CommandMarkdownMeta>(markdown, { postProcess: commandMetaPostProcessor });
 }
 
 export async function loadCommandMeta(name: string): Promise<{ description: string; path: string }> {

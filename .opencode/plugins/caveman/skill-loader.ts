@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { parseFrontmatter, normalizeValue, unwrapFoldedScalar } from "./frontmatter.js";
+import { parseMarkdown, skillMetaPostProcessor, type MarkdownMeta } from "./markdown-parser.js";
 
 const PLUGIN_ROOT = resolve(fileURLToPath(import.meta.url), "../../../..");
 const SKILLS_DIR = resolve(PLUGIN_ROOT, ".opencode/skills");
@@ -25,27 +25,14 @@ export interface SkillInfo {
   autoinvoke: boolean;
 }
 
-export interface SkillMarkdownMeta {
+export interface SkillMarkdownMeta extends MarkdownMeta {
   name?: string;
   description?: string;
   autoinvoke?: boolean;
-  [key: string]: unknown;
 }
 
 export function parseSkillMarkdown(markdown: string): { meta: SkillMarkdownMeta; body: string } {
-  const { meta, body } = parseFrontmatter(markdown);
-
-  // Handle skill-specific post-processing
-  const skillMeta: SkillMarkdownMeta = {};
-  for (const [key, value] of Object.entries(meta)) {
-    let normalized = normalizeValue(value);
-    if (key === "description") {
-      normalized = unwrapFoldedScalar(normalized);
-    }
-    skillMeta[key] = normalized;
-  }
-
-  return { meta: skillMeta, body };
+  return parseMarkdown<SkillMarkdownMeta>(markdown, { postProcess: skillMetaPostProcessor });
 }
 
 export async function loadSkill(id: SkillId): Promise<SkillInfo> {
