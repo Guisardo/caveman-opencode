@@ -1,4 +1,5 @@
 import { Plugin } from "@opencode/plugin";
+import { z } from "zod";
 import { SKILL_IDS, loadSkill, type SkillInfo } from "./skill-loader.js";
 import { COMMAND_DEFS, loadCommandMeta } from "./command-loader.js";
 import { validateOptions, isValidLevel, type CavemanPluginOptions } from "./options-validator.js";
@@ -6,14 +7,13 @@ import { STORAGE_KEYS, VALID_LEVELS, type CavemanLevel } from "./storage-keys.js
 
 const DEFAULT_LEVEL: CavemanLevel = "full";
 
+const StoredLevelSchema = z.object({
+  level: z.enum(VALID_LEVELS.slice() as [CavemanLevel, ...CavemanLevel[]]),
+});
+
 function isStoredLevel(obj: unknown): obj is { level: CavemanLevel } {
-  return (
-    obj !== null &&
-    typeof obj === "object" &&
-    "level" in obj &&
-    typeof (obj as { level: unknown }).level === "string" &&
-    VALID_LEVELS.includes((obj as { level: string }).level as CavemanLevel)
-  );
+  const result = StoredLevelSchema.safeParse(obj);
+  return result.success;
 }
 
 export default {
@@ -55,9 +55,12 @@ export default {
             name,
             description,
             execute: async ({ sessionID, prompt, delivery }) => {
+              const args = prompt && typeof prompt === "object" && "text" in prompt
+                ? String((prompt as { text: unknown }).text ?? "").trim()
+                : "";
               await ctx.session.prompt({
                 sessionID,
-                text: `/skill ${skill}${prompt.text?.trim() ? ` ${prompt.text.trim()}` : ''}`,
+                text: `/skill ${skill}${args ? ` ${args}` : ""}`,
                 delivery,
               });
             },
